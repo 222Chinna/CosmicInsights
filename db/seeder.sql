@@ -5,6 +5,13 @@ USE ci;
 DROP TABLE IF EXISTS exoplanets;
 DROP TABLE IF EXISTS solar_flares;
 
+-- Code added by Charan 
+
+DROP TABLE IF EXISTS stars;
+DROP TABLE IF EXISTS asteriods;
+
+-- End
+
 CREATE TABLE exoplanets (
     pl_name VARCHAR(255) NOT NULL,
     hostname VARCHAR(255) NOT NULL,
@@ -113,3 +120,83 @@ CREATE TABLE solar_flares(
     note VARCHAR(1000),
     PRIMARY KEY(flare_id)
 );
+
+
+-- Code added by Charan
+CREATE TABLE asteroids (
+    orbit_id INT,
+    orbit_determination_date VARCHAR(255),
+    first_observation_date DATE,
+    last_observation_date DATE,
+    data_arc_in_days INT,
+    observations_used INT,
+    orbit_uncertainty INT,
+    minimum_orbit_intersection FLOAT,
+    jupiter_tisserand_invariant FLOAT,
+    epoch_osculation FLOAT,
+    eccentricity FLOAT,
+    semi_major_axis FLOAT,
+    inclination FLOAT,
+    ascending_node_longitude FLOAT,
+    orbital_period FLOAT,
+    perihelion_distance FLOAT,
+    perihelion_argument FLOAT,
+    aphelion_distance FLOAT,
+    perihelion_time FLOAT,
+    mean_anomaly FLOAT,
+    mean_motion FLOAT,
+    equinox VARCHAR(255),
+    orbit_class VARCHAR(255),
+    id INT,
+    PRIMARY KEY(id)
+);
+
+CREATE TABLE stars (
+    sy_name VARCHAR(255),
+    hostname VARCHAR(255),
+    tic_id VARCHAR(255),
+    sy_snum INT,
+    sy_pnum INT,
+    st_refname VARCHAR(255),
+    st_spectype VARCHAR(255),
+    st_teff FLOAT,
+    st_tefferr1 FLOAT,
+    st_tefferr2 FLOAT,
+    st_tefflim FLOAT,
+    st_rad FLOAT,
+    st_raderr1 FLOAT,
+    st_raderr2 FLOAT,
+    st_radlim FLOAT,
+    st_mass FLOAT,
+    st_masserr1 FLOAT,
+    st_masserr2 FLOAT,
+    st_masslim FLOAT,
+    st_met FLOAT,
+    st_meterr1 FLOAT,
+    st_meterr2 FLOAT,
+    st_metlim FLOAT,
+    st_metratio VARCHAR(255),
+    st_logg FLOAT,
+    st_loggerr1 FLOAT,
+    st_loggerr2 FLOAT,
+    st_logglim FLOAT,
+    sy_refname VARCHAR(255),
+    rastr VARCHAR(255),
+    ra FLOAT,
+    decstr VARCHAR(255),
+    decliniation FLOAT,
+    sy_dist FLOAT,
+    sy_disterr1 FLOAT,
+    sy_disterr2 FLOAT,
+    sy_vmag FLOAT,
+    sy_vmagerr1 FLOAT,
+    sy_vmagerr2 FLOAT,
+    sy_kmag FLOAT,
+    sy_kmagerr1 FLOAT,
+    sy_kmagerr2 FLOAT,
+    sy_gaiamag FLOAT,
+    sy_gaiamagerr1 FLOAT,
+    sy_gaiamagerr2 FLOAT,
+    PRIMARY KEY(sy_name, hostname, st_refname)
+);
+-- End
