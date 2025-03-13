@@ -84,6 +84,64 @@ with open('solar_flares.csv', mode='r', newline='', encoding='utf-8') as file:
             # this should eliminate duplicate rows
             continue
 
+# Code added by Charan
+prepared_statement = """
+INSERT INTO stars
+VALUES
+  ("""
+for i in range(45):
+    if i == 44:
+        prepared_statement += "%s)"
+    else:
+        prepared_statement += "%s, "
+
+cursor = conn.cursor()
+
+# Open the CSV file
+with open('stars.csv', mode='r', newline='', encoding='utf-8') as file:
+    reader = csv.reader(file)
+    
+    # Process each row
+    for idx, row in enumerate(reader):
+        if idx == 0:
+            continue
+        print(idx)
+        for i, item in enumerate(row):
+            if item == "":
+                row[i] = None
+        try:
+            cursor.execute(prepared_statement, row)
+        except mysql.connector.errors.IntegrityError:
+            continue
+
+prepared_statement = """
+INSERT INTO asteroids
+VALUES
+  ("""
+for i in range(24):
+    if i == 23:
+        prepared_statement += "%s)"
+    else:
+        prepared_statement += "%s, "
+
+# Open the CSV file
+with open('asteroid_orbital_data.csv', mode='r', newline='', encoding='utf-8') as file:
+    reader = csv.reader(file)
+    
+    # Process each row
+    for idx, row in enumerate(reader):
+        if idx == 0:
+            continue
+        for i, item in enumerate(row):
+            if item == "":
+                row[i] = None
+        try:
+            cursor.execute(prepared_statement, row)
+        except mysql.connector.errors.IntegrityError:
+            continue
+
+#end
+
 conn.commit()
 cursor.close()
 conn.close()
