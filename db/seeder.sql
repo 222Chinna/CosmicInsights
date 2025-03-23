@@ -23,7 +23,7 @@ CREATE TABLE exoplanets (
     disc_facility VARCHAR(255),
     soltype VARCHAR(255),
     pl_controv_flag TINYINT,
-    pl_refname VARCHAR(1000),
+    pl_refname VARCHAR(240),
     pl_orbper FLOAT,
     pl_orbpererr1 FLOAT,
     pl_orbpererr2 FLOAT,
