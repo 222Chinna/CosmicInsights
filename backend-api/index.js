@@ -45,6 +45,29 @@ app.get('/solar_flares', (req, res) => {
 });
 
 
+app.get('/stars', (req, res) => {
+  db.query('SELECT * FROM stars', (err, results) => {
+    if (err) {
+      console.error('Error fetching stars data:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.json(results);
+  });
+});
+
+
+app.get('/asteroids', (req, res) => {
+  db.query('SELECT * FROM asteroids', (err, results) => {
+    if (err) {
+      console.error('Error fetching asteroids data:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.json(results);
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
