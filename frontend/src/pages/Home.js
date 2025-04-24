@@ -8,7 +8,7 @@ function Home() {
       <div className="title">Cosmic Insights</div>
       <div className="button-container">
         <Link to="/star" className="nav-button">
-          <img src="/solar.jpg" alt="Solar System" />
+          <img src="/star.jpg" alt="Star" />
           <span>Solar</span>
         </Link>
         <Link to="/asteroid" className="nav-button">

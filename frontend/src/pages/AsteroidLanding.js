@@ -1,10 +1,14 @@
 import React from "react";
+import AsteroidOrbits from "../components/AsteroidOrbits3D";
+import "../App.css";
+import { useNavigate } from "react-router-dom";
 
 function AsteroidLanding() {
+  const navigate = useNavigate();
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>Asteroids</h1>
-      <p>Information about Asteroids.</p>
+    <div>
+      <button className="home-button" onClick={() => navigate("/")}>Home</button>
+      <AsteroidOrbits /> 
     </div>
   );
 }

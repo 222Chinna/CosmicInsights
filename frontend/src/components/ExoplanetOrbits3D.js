@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import "../App.css";
-import { useNavigate } from "react-router-dom";
+import "./ExoplanetOrbits3D.css";
 
 const exoplanetData = [
   {
@@ -87,6 +87,53 @@ const exoplanetData = [
     pl_mass: 2.0,
   },
 ];
+const getOrbitalPeriod = (a) => Math.sqrt(Math.pow(a, 3)); // in Earth years
+const OrbitSystem = ({ planet, onClick }) => {
+  const a = planet.pl_orbsmax;
+  const e = planet.pl_orbeccen;
+  const inclination = THREE.MathUtils.degToRad(planet.pl_orbincl);
+  const period = getOrbitalPeriod(a);
+  const speed = (2 * Math.PI) / (period * 60); // arbitrary visible speed
+  const b = a * Math.sqrt(1 - e * e);
+  const radius = 0.05 + planet.pl_mass * 0.02;
+
+  const planetRef = useRef();
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    const angle = (t * speed) % (2 * Math.PI);
+
+    const x = a * Math.cos(angle);
+    const z = b * Math.sin(angle);
+
+    if (planetRef.current) {
+      planetRef.current.position.set(x, 0, z);
+    }
+  });
+
+  const curve = new THREE.EllipseCurve(0, 0, a, b, 0, 2 * Math.PI, false, 0);
+  const points = curve.getPoints(100).map((p) => [p.x, 0, p.y]);
+
+  return (
+    <group rotation={[inclination, 0, 0]}>
+      <line>
+        <bufferGeometry attach="geometry">
+          <bufferAttribute
+            attach="attributes-position"
+            array={new Float32Array(points.flat())}
+            count={points.length}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial attach="material" color="white" />
+      </line>
+      <mesh ref={planetRef} onClick={onClick}>
+        <sphereGeometry args={[radius, 16, 16]} />
+        <meshStandardMaterial color="cyan" />
+      </mesh>
+    </group>
+  );
+};
 
 const Orbit = ({ a, e, inclination }) => {
   const curve = new THREE.EllipseCurve(
@@ -102,17 +149,50 @@ const Orbit = ({ a, e, inclination }) => {
   const points = curve.getPoints(100).map((p) => [p.x, 0, p.y]);
 
   return (
-    <line rotation={[THREE.MathUtils.degToRad(inclination), 0, 0]}>
-      <bufferGeometry attach="geometry">
-        <bufferAttribute
-          attach="attributes-position"
-          array={new Float32Array(points.flat())}
-          count={points.length}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <lineBasicMaterial attach="material" color="white" linewidth={1} />
-    </line>
+    <group>
+      <line rotation={[THREE.MathUtils.degToRad(inclination), 0, 0]}>
+        <bufferGeometry attach="geometry">
+          <bufferAttribute
+            attach="attributes-position"
+            array={new Float32Array(points.flat())}
+            count={points.length}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial attach="material" color="white" />
+      </line>
+    </group>
+  );
+};
+
+const Planet = ({
+  a,
+  e,
+  inclination,
+  radius,
+  orbitalSpeed,
+  color,
+  onClick,
+}) => {
+  const ref = useRef();
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    const angle = (t * orbitalSpeed) % (2 * Math.PI);
+
+    const b = a * Math.sqrt(1 - e * e);
+    const x = a * Math.cos(angle);
+    const z = b * Math.sin(angle);
+
+    ref.current.position.set(x, 0, z);
+    ref.current.rotation.set(THREE.MathUtils.degToRad(inclination), 0, 0);
+  });
+
+  return (
+    <mesh ref={ref} onClick={onClick}>
+      <sphereGeometry args={[radius, 16, 16]} />
+      <meshStandardMaterial color={color} />
+    </mesh>
   );
 };
 
@@ -176,11 +256,12 @@ const ExoplanetOrbits3D = () => {
               <meshBasicMaterial color="yellow" />
             </mesh>
             {filteredPlanets.map((planet, index) => (
-              <Orbit
+              <OrbitSystem
                 key={index}
-                a={planet.pl_orbsmax}
-                e={planet.pl_orbeccen}
-                inclination={planet.pl_orbincl}
+                planet={planet}
+                onClick={() =>
+                  navigate(`/exoplanet/${encodeURIComponent(planet.pl_name)}`)
+                }
               />
             ))}
             <OrbitControls />
@@ -210,12 +291,6 @@ const ExoplanetOrbits3D = () => {
         ))}
         <button onClick={applyFilters}>Apply Filters</button>
       </div>
-      <input
-          type="text"
-          placeholder="Search for a planet..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
     </div>
   );
 };
