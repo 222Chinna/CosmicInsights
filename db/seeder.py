@@ -15,7 +15,7 @@ try:
     # My local MySQL database has a "root" user with no password.
     conn = mysql.connector.connect(
         host="localhost",  # e.g., "localhost"
-        user="ajaya",
+        user="root",
         password="password",
         database="ci"
     )
