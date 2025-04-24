@@ -1,0 +1,75 @@
+.exoplanet-landing {
+  background-color: #0b0033;
+  color: white;
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+  text-align: center;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  width: 250px;
+  max-width: 80%;
+  font-size: 1rem;
+}
+
+.filter-panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.filter-group label {
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.filter-group input {
+  width: 60px;
+  margin: 0 4px;
+  padding: 4px;
+  text-align: center;
+  border: 1px solid white;
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+}
+
+.exoplanet-wrapper {
+  height: 80vh;
+  padding: 12px;
+  background-color: #B3B3B3;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.exoplanet-visual {
+  background-color: #17162D;
+  padding: 10px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
