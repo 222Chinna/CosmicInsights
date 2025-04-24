@@ -2,12 +2,12 @@ const express = require('express');
 const mysql = require('mysql2');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 // MySQL connection
 const db = mysql.createConnection({
   host: 'localhost',
-  user: 'ajaya',
+  user: 'root',
   password: 'password',
   database: 'ci'
 });
