@@ -9,3 +9,7 @@
    ```
    [{"hostname":"11 Com"},{"hostname":"11 UMi"},{"hostname":"14 And"},{"hostname":"14 Her"}]
    ```
+2. `/exoplanets/` for a list of exoplanets.
+   Query parameters:
+   - `hostname`: Returns exoplanets with the passed hostname.
+   - `limit`: If no `hostname`, this limits the number of exoplanets returned.

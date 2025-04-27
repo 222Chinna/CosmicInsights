@@ -25,13 +25,22 @@ db.connect((err) => {
 
 // GET endpoint to fetch users
 app.get('/exoplanets', (req, res) => {
+  let query = 'SELECT * FROM exoplanets WHERE default_flag=1 ';
+
   // use default flag and use number of exoplanets as filter
-  let limit = 30;
+  let limit = 30, addLimit = true;
   if (req.query.limit != undefined) {
     limit = Number.parseInt(req.query.limit);
   }
 
-  let query = 'SELECT * FROM exoplanets WHERE default_flag=1 LIMIT ' + limit;
+  if (req.query.hostname != undefined) {
+    addLimit = false;
+    query += "AND hostname = '" + req.query.hostname + "'";
+  }
+
+  if (addLimit) {
+    query += 'LIMIT ' + limit;
+  }
 
   db.query(query, (err, results) => {
     if (err) {
