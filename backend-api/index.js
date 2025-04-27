@@ -25,7 +25,13 @@ db.connect((err) => {
 
 // GET endpoint to fetch users
 app.get('/exoplanets', (req, res) => {
-  db.query('SELECT * FROM exoplanets', (err, results) => {
+  // use default flag and use number of exoplanets as filter
+  let limit = 30;
+  if (req.query.limit != undefined) {
+    limit = Number.parseInt(req.query.limit);
+  }
+
+  db.query('SELECT * FROM exoplanets WHERE default_flag=1 LIMIT ' + limit, (err, results) => {
     if (err) {
       console.error('Error fetching exoplanet data:', err);
       res.status(500).send('Server error');

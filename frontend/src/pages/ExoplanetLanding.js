@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ExoplanetOrbits from "../components/ExoplanetOrbits3D";
 import "./ExoplanetLanding.css";
 
-const defaultData = [
+let defaultData = [
   {
     pl_name: "11 Com b",
     pl_orbsmax: 1.29,
@@ -77,6 +77,23 @@ const defaultData = [
     pl_mass: 2.0,
   },
 ];
+
+try {
+  const res = await fetch('http://localhost:3001/exoplanets?limit=10');
+  const data = await res.json();
+  // go through data and set random orbincl, mass, and temp
+  console.log(data);
+  for (let obj of data) {
+    obj.pl_orbincl = 15;
+    obj.pl_mass = obj.st_mass;
+    obj.pl_temp = 50;
+  }
+  defaultData = data
+  // Do something with the data
+} catch (err) {
+  console.error('Error fetching exoplanets:', err);
+  console.error("Using local exoplanets");
+}
 
 function ExoplanetLanding() {
   const navigate = useNavigate();
