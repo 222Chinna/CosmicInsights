@@ -33,6 +33,9 @@ app.get('/exoplanets', (req, res) => {
     limit = Number.parseInt(req.query.limit);
   }
 
+  // default hostname
+  req.query.hostname = 'HD 10180';
+
   if (req.query.hostname != undefined) {
     addLimit = false;
     query += "AND hostname = '" + req.query.hostname + "'";
