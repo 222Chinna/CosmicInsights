@@ -79,7 +79,7 @@ let defaultData = [
 ];
 
 try {
-  const res = await fetch('http://localhost:3001/exoplanets?limit=10');
+  const res = await fetch('http://localhost:3001/exoplanets?limit=1000');
   const data = await res.json();
   // go through data and set random orbincl, mass, and temp
   console.log(data);

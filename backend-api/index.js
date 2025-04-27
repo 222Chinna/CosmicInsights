@@ -31,7 +31,21 @@ app.get('/exoplanets', (req, res) => {
     limit = Number.parseInt(req.query.limit);
   }
 
-  db.query('SELECT * FROM exoplanets WHERE default_flag=1 LIMIT ' + limit, (err, results) => {
+  let query = 'SELECT * FROM exoplanets WHERE default_flag=1 LIMIT ' + limit;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching exoplanet data:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.json(results);
+  });
+});
+
+// 
+app.get('/exoplanets/solarsystems', (req, res) => {
+  db.query('select distinct(hostname) from exoplanets;', (err, results) => {
     if (err) {
       console.error('Error fetching exoplanet data:', err);
       res.status(500).send('Server error');
