@@ -5,12 +5,12 @@ USE ci;
 DROP TABLE IF EXISTS exoplanets;
 DROP TABLE IF EXISTS solar_flares;
 
--- Code added by Charan 
+
 
 DROP TABLE IF EXISTS stars;
 DROP TABLE IF EXISTS asteriods;
 
--- End
+
 
 CREATE TABLE exoplanets (
     pl_name VARCHAR(255) NOT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE solar_flares(
 );
 
 
--- Code added by Charan
+
 CREATE TABLE asteroids (
     orbit_id INT,
     orbit_determination_date VARCHAR(255),
@@ -199,4 +199,4 @@ CREATE TABLE stars (
     sy_gaiamagerr2 FLOAT,
     PRIMARY KEY(sy_name, hostname, st_refname)
 );
--- End
+
