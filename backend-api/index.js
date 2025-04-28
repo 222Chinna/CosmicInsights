@@ -90,9 +90,35 @@ app.get('/stars', (req, res) => {
   });
 });
 
-
 app.get('/asteroids', (req, res) => {
-  db.query('SELECT * FROM asteroids', (err, results) => {
+  let query = 'SELECT * FROM asteroids WHERE 1=1';
+  const { columns, values, limit } = req.query;
+  
+  let finalLimit;
+  
+  if (limit) {
+    finalLimit = Number.parseInt(limit);
+  } else {
+    finalLimit = 30;
+  }
+  
+  if (columns && values) {
+    const columnsList = columns.split(',');
+    const valuesList = values.split(',');
+
+    // If lengths of columns and values are not equal, an error will be thrown
+    if (columnsList.length != valuesList.length) {
+      return res.status(400).send('Columns and values length mismatch');
+    }
+    
+    for (var i = 0; i < columnsList.length; i++) {
+      query += " AND " + columnsList[i] + " = '" + valuesList[i] + "'";
+    }
+  }
+  
+  query += ' LIMIT ' + finalLimit;
+
+  db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching asteroids data:', err);
       res.status(500).send('Server error');
@@ -100,7 +126,21 @@ app.get('/asteroids', (req, res) => {
     }
     res.json(results);
   });
+  
 });
+
+
+
+// app.get('/asteroids', (req, res) => {
+//   db.query('SELECT * FROM asteroids', (err, results) => {
+//     if (err) {
+//       console.error('Error fetching asteroids data:', err);
+//       res.status(500).send('Server error');
+//       return;
+//     }
+//     res.json(results);
+//   });
+// });
 
 // Start server
 app.listen(PORT, () => {
