@@ -23,27 +23,16 @@ db.connect((err) => {
   console.log('Connected to MySQL');
 });
 
-// GET endpoint to fetch users
+// GET endpoint to fetch exoplanets
 app.get('/exoplanets', (req, res) => {
   let query = 'SELECT * FROM exoplanets WHERE default_flag=1 ';
 
-  // use default flag and use number of exoplanets as filter
-  let limit = 30, addLimit = true;
-  if (req.query.limit != undefined) {
-    limit = Number.parseInt(req.query.limit);
-  }
-
   // default hostname
-  req.query.hostname = 'HD 10180';
-
-  if (req.query.hostname != undefined) {
-    addLimit = false;
-    query += "AND hostname = '" + req.query.hostname + "'";
+  if (req.query.hostname == undefined) {
+    req.query.hostname = 'HD 10180';
   }
 
-  if (addLimit) {
-    query += 'LIMIT ' + limit;
-  }
+  query += "AND hostname = '" + req.query.hostname + "'";
 
   db.query(query, (err, results) => {
     if (err) {
@@ -53,6 +42,55 @@ app.get('/exoplanets', (req, res) => {
     }
     res.json(results);
   });
+});
+
+/*
+
+*/
+app.get('/exoplanets/:planetname', (req, res) => {
+  /*
+  - get all exoplanets
+  - get our exoplanet object
+  - compute exoplanet object distance with every other object
+  - return object with our exoplanet and list of planets
+  */
+  // let query = "SELECT * FROM exoplanets WHERE default_flag=1 AND pl_name = '" + req.query.planetname + "'";
+  let query = "SELECT * FROM exoplanets WHERE default_flag=1";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching exoplanet data:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    var obj = {}; // our exoplanet
+    let found = false;
+    for (let planet of results) {
+      if (planet.pl_name == req.params.planetname) {
+        obj = planet;
+        found = true;
+      }
+    }
+    if (!found) {
+      res.status(404).send('Planet not found');
+      return;
+    }
+    // set x and y 
+    let x = req.query.x;
+    let y = req.query.y;
+    if (x == undefined || y == undefined) {
+      res.send({planet: obj});
+      return;
+    }
+
+    // find max values for normalization
+
+    // res.json(results);
+  });
+  // res.json({data: req.params.planetname})
+  // compute distance
+
+
+  // db.query(query,)
 });
 
 // 
