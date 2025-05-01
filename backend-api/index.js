@@ -131,40 +131,40 @@ app.get('/stars', (req, res) => {
 app.get('/asteroids', (req, res) => {
   let query = 'SELECT * FROM asteroids WHERE 1=1';
   const { columns, values, limit } = req.query;
-  
-  let finalLimit;
-  
-  if (limit) {
-    finalLimit = Number.parseInt(limit);
-  } else {
-    finalLimit = 30;
-  }
-  
+
+  const finalLimit = limit ? parseInt(limit) : 30;
+
   if (columns && values) {
     const columnsList = columns.split(',');
     const valuesList = values.split(',');
 
-    // If lengths of columns and values are not equal, an error will be thrown
-    if (columnsList.length != valuesList.length) {
+    if (columnsList.length !== valuesList.length) {
       return res.status(400).send('Columns and values length mismatch');
     }
-    
-    for (var i = 0; i < columnsList.length; i++) {
-      query += " AND " + columnsList[i] + " = '" + valuesList[i] + "'";
+
+    for (let i = 0; i < columnsList.length; i++) {
+      const col = columnsList[i];
+      const val = valuesList[i];
+
+      if (val.startsWith('>=')) {
+        query += ` AND ${col} >= ${val.slice(2)}`;
+      } else if (val.startsWith('<=')) {
+        query += ` AND ${col} <= ${val.slice(2)}`;
+      } else {
+        query += ` AND ${col} = '${val}'`;
+      }
     }
   }
-  
+
   query += ' LIMIT ' + finalLimit;
 
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error fetching asteroids data:', err);
-      res.status(500).send('Server error');
-      return;
+      return res.status(500).send('Server error');
     }
     res.json(results);
   });
-  
 });
 
 
