@@ -11,8 +11,7 @@
    ```
 2. `/exoplanets/` for a list of exoplanets.
    Query parameters:
-   - `hostname`: Returns exoplanets with the passed hostname.
-   - `limit`: If no `hostname`, this limits the number of exoplanets returned.
+   - `hostname`: Returns exoplanets with the passed hostname. Default: 'HD 10180'
   
 3. `/asteroids/` for a list of asteroids with optional filtering and limiting.
    Query parameters:
@@ -33,3 +32,27 @@
 
    Asteroids with multiple filters
    `/asteroids/?columns=minimum_orbit_intersection,eccentricity&values=0.05,0.3`
+   
+4. `/exoplanets/:planetname`
+   1D example:
+   ```
+   localhost:3001/exoplanets/Wolf 1069 b?oned=true&y=pl_orbsmax&n=20
+   ```
+   Computes one-dimensional similarity on the `pl_orbsmax` attribute.
+
+   2D example:
+   ```
+   localhost:3001/exoplanets/Wolf 1069 b?x=st_mass&y=pl_orbsmax&n=20
+   ```
+
+   Output:
+   ```
+   {"planet":{}, "similar_planets": [{},{}]}
+   ```
+
+   Query parameters:
+   - `x` and `y`: attribute names such as `pl_mass`. Only `y` can be set if `oned`
+     is set. If the attribute name is invalid, a "bad request" response is returned.
+   - `oned`: perform similarity checking only on one attribute `y`.
+   - `n`: number of similar planets to return
+   

@@ -45,6 +45,8 @@ app.get('/exoplanets', (req, res) => {
 });
 
 /*
+  Given an exoplanet, we want to return information about it
+  and the closest 20 planets.
 
 */
 app.get('/exoplanets/:planetname', (req, res) => {
@@ -74,24 +76,107 @@ app.get('/exoplanets/:planetname', (req, res) => {
       res.status(404).send('Planet not found');
       return;
     }
-    // set x and y 
+    let n = 20;
+    if (req.query.n != undefined) {
+      n = Number.parseInt(req.query.n);
+    }
     let x = req.query.x;
     let y = req.query.y;
-    if (x == undefined || y == undefined) {
-      res.send({planet: obj});
+    if ((x != undefined && obj[x] == undefined) ||
+      (y != undefined && obj[y] == undefined) 
+    ) {
+      res.status(400).send('bad request');
+      return;
+    }
+    let oned = req.query.oned;
+
+    if (oned != undefined) {
+      if (x != undefined || y == undefined) {
+        res.status(400).send('bad request');
+        return;
+      }
+      // compute 1d similarity
+      let similarPlanets = compute1DSimilarity(results, obj, y, n);
+
+      res.send({planet: obj, similar_planets: similarPlanets});
       return;
     }
 
-    // find max values for normalization
+    if (x == undefined && y == undefined) {
+      res.send({planet: obj});
+      return;
+    } else if (x == undefined || y == undefined) {
+      res.status(400).send('bad request');
+      return;
+    }
 
-    // res.json(results);
+    let similarPlanets = computeSimilarity(results, obj, x, y, n);
+
+    res.json({planet: obj, similar_planets: similarPlanets});
   });
-  // res.json({data: req.params.planetname})
-  // compute distance
-
-
-  // db.query(query,)
 });
+
+function compute1DSimilarity(planets, inputPlanet, attr, n) {
+  let distances = [];
+  for (let i = 0; i < planets.length; i++) {
+    let planet = planets[i];
+    if (planet.pl_name == inputPlanet.pl_name) {
+      continue;
+    }
+    let similarity = Math.abs(inputPlanet[attr] - planet[attr]);
+    distances.push({idx: i, similarity: similarity})
+  }
+  distances.sort((d1, d2) => d1.similarity - d2.similarity)
+  if (n > distances.length) {
+    n = distances.length;
+  }
+  let rv = [];
+  for (let i = 0; i < n; i++) {
+    rv.push(planets[distances[i].idx]);
+  }
+  return rv;
+}
+
+function computeSimilarity(planets, inputPlanet, attrX, attrY, n) {
+  let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
+  for (let planet of planets) {
+    if (planet[attrX] < xmin) {
+      xmin = planet[attrX];
+    }
+    if (planet[attrX] > xmax) {
+      xmax = planet[attrX];
+    }
+    if (planet[attrY] < ymin) {
+      ymin = planet[attrY];
+    }
+    if (planet[attrY] > ymax) {
+      ymax = planet[attrY];
+    }
+  }
+  let distances = [];
+  for (let i = 0; i < planets.length; i++) {
+    let planet = planets[i];
+    if (planet.pl_name == inputPlanet.pl_name) {
+      // distances.push({idx: i, d: 0})
+      continue;
+    }
+    let similarity =
+      Math.sqrt(
+        Math.pow((inputPlanet[attrX] - planet[attrX])/(xmax - xmin), 2) + 
+        Math.pow((inputPlanet[attrY] - planet[attrY])/(ymax - ymin), 2)
+      );
+    distances.push({idx: i, similarity: similarity});
+  }
+  distances.sort((d1, d2) => d1.similarity - d2.similarity);
+  if (n > distances.length) {
+    n = distances.length;
+  }
+  let rv = [];
+  for (let i = 0; i < n; i++) {
+    rv.push(planets[distances[i].idx]);
+  }
+  return rv;
+}
 
 // 
 app.get('/exoplanets/solarsystems', (req, res) => {
