@@ -22,7 +22,7 @@ const AdaptiveGraph = ({ data, xKey, yKey }) => {
   }, [xKey, data]);
 
   return (
-    <ResponsiveContainer width="100%" height={500}>
+    <ResponsiveContainer width="100%" height={300}>
       {isCategoricalX ? (
         <BarChart
           data={data}

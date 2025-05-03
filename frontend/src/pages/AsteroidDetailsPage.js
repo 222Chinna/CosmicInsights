@@ -57,8 +57,8 @@ const AsteroidDetailsPage = () => {
       <div className="header">
         <h1 className="star-name">{asteroid.name}</h1>
         <div className="button-group">
-          <button onClick={() => navigate(-1)}>Back</button>
-          <button onClick={() => navigate("/")}>Home</button>
+          <button className="home-button" onClick={() => navigate(-1)}>Back</button>
+          <button className="home-button" onClick={() => navigate("/")}>Home</button>
         </div>
       </div>
 

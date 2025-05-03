@@ -16,7 +16,7 @@ try:
     conn = mysql.connector.connect(
         host="localhost",  # e.g., "localhost"
         user="root",
-        password="password",
+        password="rootcory",
         database="ci"
     )
     print("connected")

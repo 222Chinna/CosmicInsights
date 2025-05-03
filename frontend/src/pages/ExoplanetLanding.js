@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import ExoplanetOrbits from "../components/ExoplanetOrbits3D";
 import "./ExoplanetLanding.css";
@@ -78,26 +79,12 @@ let defaultData = [
   },
 ];
 
-try {
-  const res = await fetch('http://localhost:3001/exoplanets?limit=1000');
-  const data = await res.json();
-  // go through data and set random orbincl, mass, and temp
-  console.log(data);
-  for (let obj of data) {
-    obj.pl_orbincl = 15;
-    obj.pl_mass = obj.st_mass;
-    obj.pl_temp = 50;
-  }
-  defaultData = data
-  // Do something with the data
-} catch (err) {
-  console.error('Error fetching exoplanets:', err);
-  console.error("Using local exoplanets");
-}
-
 function ExoplanetLanding() {
+  const [solarSystems, setSolarSystems] = useState([]);
+  const [selectedSystem, setSelectedSystem] = useState(null);
+  const [inclinationMode, setInclinationMode] = useState("same");
+
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     pl_orbsmax: [0, 100],
     pl_orbeccen: [0, 1],
@@ -106,6 +93,26 @@ function ExoplanetLanding() {
   });
   const [data, setData] = useState(defaultData);
   const [filteredData, setFilteredData] = useState(defaultData);
+
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/exoplanets?limit=1000");
+        const data = await res.json();
+        const planets = data.map((obj) => ({
+          ...obj,
+          pl_orbincl: 15,
+          pl_mass: obj.st_mass ?? 1.0,
+          pl_temp: 50,
+        }));
+        setData(planets);
+        setFilteredData(planets);
+      } catch (err) {
+        console.error("Error fetching default exoplanets:", err);
+      }
+    };
+    loadInitialData();
+  }, []);
 
   useEffect(() => {
     setFilteredData(
@@ -123,6 +130,54 @@ function ExoplanetLanding() {
     );
   }, [filters, data]);
 
+  useEffect(() => {
+    const fetchSolarSystems = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:3001/solarsystems"
+        );
+        const systems = await res.json();
+        setSolarSystems(systems.map((s) => s.hostname));
+      } catch (err) {
+        console.error("Error fetching systems:", err);
+      }
+    };
+    fetchSolarSystems();
+  }, []);
+
+  useEffect(() => {
+    const fetchPlanets = async () => {
+      if (!selectedSystem) return;
+      try {
+        const res = await fetch(
+          `http://localhost:3001/exoplanets?hostname=${selectedSystem}`
+        );
+        let planets = await res.json();
+
+        planets = planets.map((p, idx) => {
+          p.pl_orbincl =
+            inclinationMode === "same"
+              ? 15
+              : inclinationMode === "even"
+              ? (360 / planets.length) * idx
+              : Math.floor(Math.random() * 360);
+          p.pl_mass = p.st_mass ?? 1.0;
+          p.pl_temp = 300 + Math.floor(Math.random() * 300);
+          return p;
+        });
+
+        setData(planets);
+        setFilteredData(planets);
+        console.log("Selected system:", selectedSystem);
+        console.log("Fetched planets:", planets);
+        console.log(filteredData);
+      } catch (err) {
+        console.error("Error fetching exoplanets:", err);
+      }
+    };
+    fetchPlanets();
+  }, [selectedSystem, inclinationMode]);
+
   const handleFilterChange = (key, index, value) => {
     setFilters((prev) => {
       const newFilters = { ...prev };
@@ -131,26 +186,51 @@ function ExoplanetLanding() {
     });
   };
 
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    console.log("Searching:", value);
-  };
-
   return (
     <div className="exoplanet-landing">
       <div className="top-bar">
-        <button className="home-button" onClick={() => navigate("/")}>
-          Home
-        </button>
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search planets..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+        <div className="top-left">
+          <button className="home-button" onClick={() => navigate("/")}>
+            Home
+          </button>
+        </div>
+
+        <div className="top-center">
+          <div style={{ width: "250px" }}>
+            <Select
+              options={solarSystems.map((sys) => ({ label: sys, value: sys }))}
+              onChange={(selected) => setSelectedSystem(selected.value)}
+              placeholder="Select a solar system..."
+              isSearchable
+              styles={{
+                menuList: (base) => ({ ...base, maxHeight: 200 }),
+                control: (base) => ({
+                  ...base,
+                  backgroundColor: "white",
+                  color: "black",
+                }),
+                singleValue: (base) => ({ ...base, color: "black" }),
+                option: (base, state) => ({
+                  ...base,
+                  backgroundColor: state.isFocused ? "#ddd" : "white",
+                  color: "black",
+                }),
+              }}
+            />
+          </div>
+
+          <select
+            className="search-input"
+            value={inclinationMode}
+            onChange={(e) => setInclinationMode(e.target.value)}
+          >
+            <option value="same">Same Inclination</option>
+            <option value="even">Equally Spaced</option>
+            <option value="random">Random</option>
+          </select>
+        </div>
       </div>
+
       <div className="filter-panel">
         {Object.keys(filters).map((key) => (
           <div key={key} className="filter-group">
@@ -171,7 +251,10 @@ function ExoplanetLanding() {
       </div>
       <div className="exoplanet-wrapper">
         <div className="exoplanet-visual">
-          <ExoplanetOrbits planets={filteredData} />
+          <ExoplanetOrbits
+            key={selectedSystem + inclinationMode}
+            planets={filteredData}
+          />
         </div>
       </div>
     </div>

@@ -24,8 +24,8 @@
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 35vh 1fr;
   grid-template-areas:
-    "info search orbit orbit"
-    "graph graph graph graph";
+    "info info orbit orbit"
+    "graph graph graph search";
   gap: 20px;
   margin-top: 20px;
 }
@@ -48,7 +48,7 @@
 
 .planet-info {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 1rem;
   background-color: #17162D;
   color: white;
