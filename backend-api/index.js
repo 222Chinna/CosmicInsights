@@ -50,13 +50,6 @@ app.get('/exoplanets', (req, res) => {
 
 */
 app.get('/exoplanets/:planetname', (req, res) => {
-  /*
-  - get all exoplanets
-  - get our exoplanet object
-  - compute exoplanet object distance with every other object
-  - return object with our exoplanet and list of planets
-  */
-  // let query = "SELECT * FROM exoplanets WHERE default_flag=1 AND pl_name = '" + req.query.planetname + "'";
   let query = "SELECT * FROM exoplanets WHERE default_flag=1";
   db.query(query, (err, results) => {
     if (err) {
@@ -179,7 +172,7 @@ function computeSimilarity(planets, inputPlanet, attrX, attrY, n) {
 }
 
 // 
-app.get('/exoplanets/solarsystems', (req, res) => {
+app.get('/solarsystems', (req, res) => {
   db.query('select distinct(hostname) from exoplanets;', (err, results) => {
     if (err) {
       console.error('Error fetching exoplanet data:', err);
