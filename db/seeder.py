@@ -27,8 +27,8 @@ prepared_statement = """
 INSERT INTO exoplanets
 VALUES
   ("""
-for i in range(92):
-    if i == 91:
+for i in range(93):
+    if i == 92:
         prepared_statement += "%s)"
     else:
         prepared_statement += "%s, "

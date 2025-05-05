@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS solar_flares;
 
 
 DROP TABLE IF EXISTS stars;
-DROP TABLE IF EXISTS asteriods;
+DROP TABLE IF EXISTS asteroids;
 
 
 
@@ -105,6 +105,7 @@ CREATE TABLE exoplanets (
     rowupdate VARCHAR(255), -- making dates VARCHAR because many are malformed
     pl_pubdate VARCHAR(255),
     releasedate VARCHAR(255),
+    pl_temp FLOAT,
     PRIMARY KEY(pl_name, hostname, pl_refname));
 
 CREATE TABLE solar_flares(
