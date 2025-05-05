@@ -44,6 +44,11 @@ app.get('/exoplanets', (req, res) => {
   });
 });
 
+// Input: partial string
+// Output: List of planet names that match on that partial string
+// Order by lexicography
+
+
 /*
   Given an exoplanet, we want to return information about it
   and the closest 20 planets.
