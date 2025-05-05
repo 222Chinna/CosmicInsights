@@ -103,7 +103,6 @@ function ExoplanetLanding() {
           ...obj,
           pl_orbincl: 15,
           pl_mass: obj.st_mass ?? 1.0,
-          pl_temp: 50,
         }));
         setData(planets);
         setFilteredData(planets);
@@ -162,6 +161,7 @@ function ExoplanetLanding() {
               ? (360 / planets.length) * idx
               : Math.floor(Math.random() * 360);
           p.pl_mass = p.st_mass ?? 1.0;
+          // XXX: What's this?
           p.pl_temp = 300 + Math.floor(Math.random() * 300);
           return p;
         });
