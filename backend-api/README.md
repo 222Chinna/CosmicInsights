@@ -55,4 +55,23 @@
      is set. If the attribute name is invalid, a "bad request" response is returned.
    - `oned`: perform similarity checking only on one attribute `y`.
    - `n`: number of similar planets to return
+
+5. `/exoplanets/search/:planet`
+   Returns a list of planets with names similar to passed name.
+   Example:
+   `localhost:3001/exoplanets/search/kepl?n=3`
+   Response:
+   ```
+   [
+    {
+        "pl_name": "Kepler-10 b"
+    },
+    {
+        "pl_name": "Kepler-10 c"
+    },
+    {
+        "pl_name": "Kepler-10 d"
+    }
+   ```
+   `n` can be used to control the number of planet names returned. Default: 20.
    

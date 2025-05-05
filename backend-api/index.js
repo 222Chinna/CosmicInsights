@@ -47,7 +47,22 @@ app.get('/exoplanets', (req, res) => {
 // Input: partial string
 // Output: List of planet names that match on that partial string
 // Order by lexicography
-
+app.get('/exoplanets/search/:planet', (req, res) => {
+  let substring = req.params.planet;
+  let n = 20;
+  if (req.query.n != undefined) {
+    n = Number.parseInt(req.query.n);
+  }
+  let query = `SELECT DISTINCT(pl_name) FROM exoplanets WHERE pl_name LIKE '%${substring}%' ORDER BY pl_name LIMIT ${n}`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error getting similar planets', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.json(results);
+  });
+});
 
 /*
   Given an exoplanet, we want to return information about it
