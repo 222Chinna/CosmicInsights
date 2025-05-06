@@ -107,7 +107,7 @@ app.get('/asteroids/:asteroidid', (req, res) => {
         return;
       }
       // compute 1d similarity
-      let similarAsteroids = compute1DSimilarity(results, obj, y, n, 'id');
+      let similarAsteroids = compute1DSimilarity(results, obj, y, n, (obj1, obj2) => obj1.id == obj2.id);
 
       res.send({asteroid: obj, similar_asteroids: similarAsteroids});
       return;
@@ -121,7 +121,7 @@ app.get('/asteroids/:asteroidid', (req, res) => {
       return;
     }
 
-    let similarAsteroids = computeSimilarity(results, obj, x, y, n, 'id');
+    let similarAsteroids = computeSimilarity(results, obj, x, y, n, (obj1, obj2) => obj1.id == obj2.id);
 
     res.json({asteroid: obj, similar_asteroids: similarAsteroids});
   });
@@ -173,7 +173,7 @@ app.get('/exoplanets/:planetname', (req, res) => {
         return;
       }
       // compute 1d similarity
-      let similarPlanets = compute1DSimilarity(results, obj, y, n, 'pl_name');
+      let similarPlanets = compute1DSimilarity(results, obj, y, n, (obj1, obj2) => obj1.pl_name == obj2.pl_name);
 
       res.send({planet: obj, similar_planets: similarPlanets});
       return;
@@ -187,20 +187,20 @@ app.get('/exoplanets/:planetname', (req, res) => {
       return;
     }
 
-    let similarPlanets = computeSimilarity(results, obj, x, y, n, 'pl_name');
+    let similarPlanets = computeSimilarity(results, obj, x, y, n, (obj1, obj2) => obj1.pl_name == obj2.pl_name);
 
     res.json({planet: obj, similar_planets: similarPlanets});
   });
 });
 
-function compute1DSimilarity(planets, inputPlanet, attr, n, matchAttr) {
+function compute1DSimilarity(items, inputItem, attr, n, isSame) {
   let distances = [];
-  for (let i = 0; i < planets.length; i++) {
-    let planet = planets[i];
-    if (planet[matchAttr] == inputPlanet[matchAttr]) {
+  for (let i = 0; i < items.length; i++) {
+    let planet = items[i];
+    if (isSame(planet, inputItem)) {
       continue;
     }
-    let similarity = Math.abs(inputPlanet[attr] - planet[attr]);
+    let similarity = Math.abs(inputItem[attr] - planet[attr]);
     distances.push({idx: i, similarity: similarity})
   }
   distances.sort((d1, d2) => d1.similarity - d2.similarity)
@@ -209,38 +209,37 @@ function compute1DSimilarity(planets, inputPlanet, attr, n, matchAttr) {
   }
   let rv = [];
   for (let i = 0; i < n; i++) {
-    rv.push(planets[distances[i].idx]);
+    rv.push(items[distances[i].idx]);
   }
   return rv;
 }
 
-function computeSimilarity(planets, inputPlanet, attrX, attrY, n, matchAttr) {
+function computeSimilarity(items, inputItem, attrX, attrY, n, isSame) {
   let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
-  for (let planet of planets) {
-    if (planet[attrX] < xmin) {
-      xmin = planet[attrX];
+  for (let item of items) {
+    if (item[attrX] < xmin) {
+      xmin = item[attrX];
     }
-    if (planet[attrX] > xmax) {
-      xmax = planet[attrX];
+    if (item[attrX] > xmax) {
+      xmax = item[attrX];
     }
-    if (planet[attrY] < ymin) {
-      ymin = planet[attrY];
+    if (item[attrY] < ymin) {
+      ymin = item[attrY];
     }
-    if (planet[attrY] > ymax) {
-      ymax = planet[attrY];
+    if (item[attrY] > ymax) {
+      ymax = item[attrY];
     }
   }
   let distances = [];
-  for (let i = 0; i < planets.length; i++) {
-    let planet = planets[i];
-    if (planet[matchAttr] == inputPlanet[matchAttr]) {
-      // distances.push({idx: i, d: 0})
+  for (let i = 0; i < items.length; i++) {
+    let item = items[i];
+    if (isSame(item, inputItem)) {
       continue;
     }
     let similarity =
       Math.sqrt(
-        Math.pow((inputPlanet[attrX] - planet[attrX])/(xmax - xmin), 2) + 
-        Math.pow((inputPlanet[attrY] - planet[attrY])/(ymax - ymin), 2)
+        Math.pow((inputItem[attrX] - item[attrX])/(xmax - xmin), 2) + 
+        Math.pow((inputItem[attrY] - item[attrY])/(ymax - ymin), 2)
       );
     distances.push({idx: i, similarity: similarity});
   }
@@ -250,7 +249,7 @@ function computeSimilarity(planets, inputPlanet, attrX, attrY, n, matchAttr) {
   }
   let rv = [];
   for (let i = 0; i < n; i++) {
-    rv.push(planets[distances[i].idx]);
+    rv.push(items[distances[i].idx]);
   }
   return rv;
 }
