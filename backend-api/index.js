@@ -64,6 +64,70 @@ app.get('/exoplanets/search/:planet', (req, res) => {
   });
 });
 
+/* Returns information about an asteroid and a list of similar
+   asteroids.
+*/
+app.get('/asteroids/:asteroidid', (req, res) => {
+  let query = 'SELECT * FROM asteroids';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching asteroid data:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    var obj = {}; // our asteroid
+    let found = false;
+    for (let asteroid of results) {
+      if (asteroid.id == req.params.asteroidid) {
+        obj = asteroid;
+        found = true;
+      }
+    }
+    if (!found) {
+      res.status(404).send('Asteroid not found');
+      return;
+    }
+    let n = 20;
+    if (req.query.n != undefined) {
+      n = Number.parseInt(req.query.n);
+    }
+    let x = req.query.x;
+    let y = req.query.y;
+    if ((x != undefined && obj[x] == undefined) ||
+      (y != undefined && obj[y] == undefined) 
+    ) {
+      res.status(400).send('bad request');
+      return;
+    }
+    let oned = req.query.oned;
+
+    if (oned != undefined) {
+      if (x != undefined || y == undefined) {
+        res.status(400).send('bad request');
+        return;
+      }
+      // compute 1d similarity
+      let similarAsteroids = compute1DSimilarity(results, obj, y, n, 'id');
+
+      res.send({asteroid: obj, similar_asteroids: similarAsteroids});
+      return;
+    }
+
+    if (x == undefined && y == undefined) {
+      res.send({asteroid: obj});
+      return;
+    } else if (x == undefined || y == undefined) {
+      res.status(400).send('bad request');
+      return;
+    }
+
+    let similarAsteroids = computeSimilarity(results, obj, x, y, n, 'id');
+
+    res.json({asteroid: obj, similar_asteroids: similarAsteroids});
+  });
+});
+
+
 /*
   Given an exoplanet, we want to return information about it
   and the closest 20 planets.
@@ -109,7 +173,7 @@ app.get('/exoplanets/:planetname', (req, res) => {
         return;
       }
       // compute 1d similarity
-      let similarPlanets = compute1DSimilarity(results, obj, y, n);
+      let similarPlanets = compute1DSimilarity(results, obj, y, n, 'pl_name');
 
       res.send({planet: obj, similar_planets: similarPlanets});
       return;
@@ -123,17 +187,17 @@ app.get('/exoplanets/:planetname', (req, res) => {
       return;
     }
 
-    let similarPlanets = computeSimilarity(results, obj, x, y, n);
+    let similarPlanets = computeSimilarity(results, obj, x, y, n, 'pl_name');
 
     res.json({planet: obj, similar_planets: similarPlanets});
   });
 });
 
-function compute1DSimilarity(planets, inputPlanet, attr, n) {
+function compute1DSimilarity(planets, inputPlanet, attr, n, matchAttr) {
   let distances = [];
   for (let i = 0; i < planets.length; i++) {
     let planet = planets[i];
-    if (planet.pl_name == inputPlanet.pl_name) {
+    if (planet[matchAttr] == inputPlanet[matchAttr]) {
       continue;
     }
     let similarity = Math.abs(inputPlanet[attr] - planet[attr]);
@@ -150,7 +214,7 @@ function compute1DSimilarity(planets, inputPlanet, attr, n) {
   return rv;
 }
 
-function computeSimilarity(planets, inputPlanet, attrX, attrY, n) {
+function computeSimilarity(planets, inputPlanet, attrX, attrY, n, matchAttr) {
   let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
   for (let planet of planets) {
     if (planet[attrX] < xmin) {
@@ -169,7 +233,7 @@ function computeSimilarity(planets, inputPlanet, attrX, attrY, n) {
   let distances = [];
   for (let i = 0; i < planets.length; i++) {
     let planet = planets[i];
-    if (planet.pl_name == inputPlanet.pl_name) {
+    if (planet[matchAttr] == inputPlanet[matchAttr]) {
       // distances.push({idx: i, d: 0})
       continue;
     }

@@ -74,4 +74,21 @@
     }
    ```
    `n` can be used to control the number of planet names returned. Default: 20.
+
+6. `localhost:3001/asteroids/:asteroidid`
+   Returns information about the asteroid with ID equal to "asteroidid". The following
+   parameters can be used to return a list of similar asteroids:
+   - `x` and `y`: attribute names such as `pl_mass`. Only `y` can be set if `oned`
+     is set. If the attribute name is invalid, a "bad request" response is returned.
+   - `oned`: perform similarity checking only on one attribute `y`.
+   - `n`: number of similar planets to return
+   1D Example:
+   `localhost:3001/asteroids/2000433?y=eccentricity&oned=true&n=10`
+   Response:
+   ```
+   {"asteroid":{}, "similar_asteroids": [{},{}]}
+   ```
+   2D example:
+   `localhost:3001/asteroids/2000433?y=eccentricity&x=epoch_osculation&n=2`
+
    
