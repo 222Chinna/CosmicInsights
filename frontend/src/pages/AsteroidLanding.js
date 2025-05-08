@@ -1,103 +1,117 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AdaptiveGraph from "../components/AdaptiveGraph";
 import AsteroidOrbits3D from "../components/AsteroidOrbits3D";
-import "./ExoplanetLanding.css";
+import "./ExoplanetLanding.css"; // reused
 
-const defaultAsteroidData = [
-  {
-    name: "Asteroid 1",
-    semi_major_axis: 2.213,
-    eccentricity: 0.423,
-    inclination: 30.06,
-    perihelion_distance: 1.276,
-    aphelion_distance: 3.151,
-    orbital_period: 1202.7,
-  },
-  {
-    name: "Asteroid 2",
-    semi_major_axis: 0.809,
-    eccentricity: 0.536,
-    inclination: 28.18,
-    perihelion_distance: 0.375,
-    aphelion_distance: 1.243,
-    orbital_period: 265.7,
-  },
-  {
-    name: "Asteroid 3",
-    semi_major_axis: 1.081,
-    eccentricity: 0.298,
-    inclination: 11.02,
-    perihelion_distance: 0.759,
-    aphelion_distance: 1.403,
-    orbital_period: 410.4,
-  },
-];
-
-function AsteroidLanding() {
+const AsteroidLanding = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [inclinationMode, setInclinationMode] = useState("same");
+
   const [filters, setFilters] = useState({
-    semi_major_axis: [0, 3],
     eccentricity: [0, 1],
-    inclination: [0, 90],
+    semi_major_axis: [0, 5],
   });
-  const [data, setData] = useState(defaultAsteroidData);
-  const [filteredData, setFilteredData] = useState(defaultAsteroidData);
+
+  const [xAxis, setXAxis] = useState("eccentricity");
+  const [yAxis, setYAxis] = useState("semi_major_axis");
+
+  useEffect(() => {
+    const fetchAsteroids = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/asteroids/?limit=20");
+        let asteroids = await res.json();
+
+        asteroids = asteroids.map((a, idx) => {
+          const base = {
+            ...a,
+            eccentricity: Number(a.eccentricity) || 0,
+            semi_major_axis: Number(a.semi_major_axis) || 1,
+            diameter: Number(a.diameter) || 1,
+            inclination: Number(a.inclination) || 0,
+          };
+          console.log(asteroids);
+          return base;
+        });
+
+        setData(asteroids);
+        setFilteredData(asteroids);
+      } catch (err) {
+        console.error("Failed to fetch asteroid data:", err);
+      }
+    };
+
+    fetchAsteroids();
+  }, [inclinationMode]);
 
   useEffect(() => {
     setFilteredData(
       data.filter(
         (a) =>
-          a.semi_major_axis >= filters.semi_major_axis[0] &&
-          a.semi_major_axis <= filters.semi_major_axis[1] &&
           a.eccentricity >= filters.eccentricity[0] &&
           a.eccentricity <= filters.eccentricity[1] &&
-          a.inclination >= filters.inclination[0] &&
-          a.inclination <= filters.inclination[1]
+          a.semi_major_axis >= filters.semi_major_axis[0] &&
+          a.semi_major_axis <= filters.semi_major_axis[1]
       )
     );
   }, [filters, data]);
 
   const handleFilterChange = (key, index, value) => {
     setFilters((prev) => {
-      const newFilters = { ...prev };
-      newFilters[key][index] = Number(value);
-      return newFilters;
+      const updated = { ...prev };
+      updated[key][index] = Number(value);
+      return updated;
     });
-  };
-
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    console.log("Searching:", value);
   };
 
   return (
     <div className="exoplanet-landing">
       <div className="top-bar">
-        <button className="home-button" onClick={() => navigate("/")}>Home</button>
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search asteroids..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+        <div className="top-left">
+          <button className="home-button" onClick={() => navigate("/")}>
+            Home
+          </button>
+        </div>
+
+        <div className="top-center">
+          <h2 style={{ color: "white" }}>Asteroid Field</h2>
+        </div>
+
+        <div className="top-right">
+          <select
+            className="search-input"
+            value={inclinationMode}
+            onChange={(e) => setInclinationMode(e.target.value)}
+          >
+            <option value="same">Same Inclination</option>
+            <option value="even">Equally Spaced</option>
+            <option value="random">Random Inclination</option>
+          </select>
+        </div>
       </div>
 
       <div className="filter-panel">
-        {Object.keys(filters).map((key) => (
+        {Object.entries(filters).map(([key, range]) => (
           <div key={key} className="filter-group">
-            <label>{key.replace(/_/g, " ").toUpperCase()}</label>
+            <label>
+              {
+                {
+                  eccentricity: "Eccentricity",
+                  semi_major_axis: "Semi-Major Axis (AU)",
+                }[key]
+              }
+            </label>
             <input
               type="number"
-              value={filters[key][0]}
+              value={range[0]}
               onChange={(e) => handleFilterChange(key, 0, e.target.value)}
             />
             -
             <input
               type="number"
-              value={filters[key][1]}
+              value={range[1]}
               onChange={(e) => handleFilterChange(key, 1, e.target.value)}
             />
           </div>
@@ -111,6 +125,6 @@ function AsteroidLanding() {
       </div>
     </div>
   );
-}
+};
 
 export default AsteroidLanding;

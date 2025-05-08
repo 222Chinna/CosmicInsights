@@ -12,7 +12,7 @@ import {
   LabelList,
 } from "recharts";
 
-const AdaptiveGraph = ({ data, xKey, yKey }) => {
+const AdaptiveGraph = ({ data, xKey, yKey, onPlanetClick }) => {
   const [isCategoricalX, setIsCategoricalX] = useState(false);
 
   useEffect(() => {
@@ -50,7 +50,28 @@ const AdaptiveGraph = ({ data, xKey, yKey }) => {
             type="number"
             domain={["auto", "auto"]}
           />
-          <YAxis dataKey={yKey} name={yKey} />
+          <YAxis
+            dataKey={yKey}
+            name={yKey}
+            domain={() => {
+              const yValues = data
+                .map((d) => parseFloat(d[yKey]))
+                .filter((v) => !isNaN(v));
+
+              if (yValues.length === 0) return ["auto", "auto"];
+
+              const min = Math.min(...yValues);
+              const max = Math.max(...yValues);
+
+              if (min === max) {
+                const buffer = min === 0 ? 1 : min * 0.05;
+                return [min - buffer, max + buffer];
+              }
+
+              return [min, max];
+            }}
+          />
+
           <Tooltip
             cursor={{ strokeDasharray: "3 3" }}
             content={({ active, payload }) => {
@@ -72,7 +93,16 @@ const AdaptiveGraph = ({ data, xKey, yKey }) => {
               return null;
             }}
           />
-          <Scatter name="Planets" data={data} fill="#0b0033" />
+          <Scatter
+            name="Planets"
+            data={data}
+            fill="#0b0033"
+            onClick={({ payload }) => {
+              if (onPlanetClick) {
+                onPlanetClick(payload);
+              }
+            }}
+          />
         </ScatterChart>
       )}
     </ResponsiveContainer>

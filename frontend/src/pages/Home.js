@@ -7,16 +7,16 @@ function Home() {
     <div>
       <div className="title">Cosmic Insights</div>
       <div className="button-container">
-        <Link to="/star" className="nav-button">
-          <img src="/star.jpg" alt="Star" />
+        <Link to="/solar" className="nav-button">
+          <img src="/images/solar.png" alt="Solar" />
           <span>Solar</span>
         </Link>
         <Link to="/asteroid" className="nav-button">
-          <img src="/asteroid.jpg" alt="Asteroids" />
+          <img src="/images/asteroid.png" alt="Asteroids" />
           <span>Asteroids</span>
         </Link>
         <Link to="/exoplanet" className="nav-button">
-          <img src="/exoplanet.jpg" alt="Exoplanets" />
+          <img src="/images/exoplanet.png" alt="Exoplanets" />
           <span>Exoplanets</span>
         </Link>
       </div>
