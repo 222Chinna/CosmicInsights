@@ -16,7 +16,7 @@ const ExoplanetDetailsPage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [xAxis, setXAxis] = useState("pl_orbsmax");
   const [yAxis, setYAxis] = useState("pl_bmassj");
-  const [topN, setTopN] = useState(20); // ⬅️ new state
+  const [topN, setTopN] = useState(20);
 
   const [selected3DPlanets, setSelected3DPlanets] = useState([]);
 
@@ -65,7 +65,7 @@ const ExoplanetDetailsPage = () => {
     };
 
     fetchPlanetAndSimilar();
-  }, [params.name, xAxis, yAxis, topN]); // ⬅️ include topN
+  }, [params.name, xAxis, yAxis, topN]);
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -210,7 +210,6 @@ const ExoplanetDetailsPage = () => {
             </div>
           </div>
 
-          {/* 🔢 Bottom-left Top N Input */}
           <div style={{
             position: "absolute",
             bottom: "20px",

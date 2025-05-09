@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdaptiveGraph from "../components/AdaptiveGraph";
 import AsteroidOrbits3D from "../components/AsteroidOrbits3D";
-import "./ExoplanetLanding.css"; // reused
+import "./ExoplanetLanding.css";
 
 const AsteroidLanding = () => {
   const navigate = useNavigate();

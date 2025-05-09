@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AdaptiveGraph from "../components/AdaptiveGraph";
 import AsteroidOrbits3D from "../components/AsteroidOrbits3D";
-import "./ExoplanetDetailsPage.css"; // reused for styling
+import "./ExoplanetDetailsPage.css";
 
 const AsteroidDetailsPage = () => {
   const location = useLocation();
@@ -47,7 +47,6 @@ const AsteroidDetailsPage = () => {
         const json = await res.json();
         setAsteroid(json.asteroid);
 
-        // ✅ Normalize for graph rendering
         setGraphData(
           (json.similar_asteroids || []).map((a) => ({
             ...a,

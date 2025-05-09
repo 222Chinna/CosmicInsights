@@ -5,7 +5,7 @@ import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 import "./ExoplanetOrbits3D.css";
 
-const getOrbitalPeriod = (a) => Math.sqrt(a ** 3); // Approx in Earth years
+const getOrbitalPeriod = (a) => Math.sqrt(a ** 3);
 
 const OrbitSystem = ({ asteroid, onClick }) => {
   const a = asteroid.semi_major_axis;
@@ -14,7 +14,7 @@ const OrbitSystem = ({ asteroid, onClick }) => {
   const period = getOrbitalPeriod(a);
   const speed = (2 * Math.PI) / (period * 60);
   const b = a * Math.sqrt(1 - e * e);
-  const radius = 0.05 + 0.015; // Fixed radius for asteroids
+  const radius = 0.05 + 0.015;
   const [isHovered, setIsHovered] = useState(false);
 
   const asteroidRef = useRef();

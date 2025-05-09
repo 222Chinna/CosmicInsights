@@ -16,7 +16,6 @@ const AdaptiveGraph = ({ data, xKey, yKey, onPlanetClick }) => {
   const [isCategoricalX, setIsCategoricalX] = useState(false);
 
   useEffect(() => {
-    // Detect if xKey contains string values (i.e. categorical data)
     const isCategorical = typeof data[0]?.[xKey] === "string";
     setIsCategoricalX(isCategorical);
   }, [xKey, data]);

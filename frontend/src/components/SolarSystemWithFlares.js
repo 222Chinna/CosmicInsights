@@ -151,7 +151,7 @@ const SolarFlare = ({ time }) => {
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (flareRef.current) {
-      const visible = Math.abs((t % 10) - time) < 0.5; // simple pulse logic
+      const visible = Math.abs((t % 10) - time) < 0.5;
       flareRef.current.visible = visible;
       flareRef.current.scale.setScalar(visible ? 1 : 0.01);
     }
@@ -171,18 +171,15 @@ const SolarSystemWithFlares = ({ planets }) => {
       <ambientLight intensity={0.5} />
       <pointLight position={[0, 0, 0]} intensity={2} />
 
-      {/* Sun */}
       <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[0.5, 32, 32]} />
         <meshBasicMaterial color="yellow" />
       </mesh>
 
-      {/* Solar flares */}
       {[0, 3, 6, 9].map((flareTime, index) => (
         <SolarFlare key={index} time={flareTime} />
       ))}
 
-      {/* Planet orbits */}
       {planets.map((planet, index) => (
         <OrbitSystem key={index} planet={planet} />
       ))}

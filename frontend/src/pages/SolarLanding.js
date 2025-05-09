@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import ExoplanetOrbits3D from "../components/ExoplanetOrbits3D";
-import "./ExoplanetLanding.css"; // reuse styling
+import "./ExoplanetLanding.css";
 
 const StarLanding = () => {
   const navigate = useNavigate();

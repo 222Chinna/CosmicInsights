@@ -83,7 +83,6 @@ function ExoplanetLanding() {
 
         setData(planets);
 
-        // 🛠 Manually filter here to prevent render mismatch
         setFilteredData(
           planets.filter(
             (planet) =>

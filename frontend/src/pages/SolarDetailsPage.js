@@ -1,4 +1,3 @@
-// src/pages/SolarSystemComparisonPage.js
 import React, { useEffect, useState } from "react";
 import ExoplanetOrbits3D from "../components/ExoplanetOrbits3D";
 import "./ExoplanetDetailsPage.css";
@@ -191,7 +190,7 @@ const SolarSystemComparisonPage = () => {
         <h1 className="star-name" style={{ margin: 0 }}>
           Compare Solar Systems
         </h1>
-        <div style={{ width: "80px" }} /> {/* spacer to keep title centered */}
+        <div style={{ width: "80px" }} />
       </div>
 
       <div
@@ -279,7 +278,6 @@ const SolarSystemComparisonPage = () => {
         </div>
       </div>
 
-      {/* Planet-level Filter */}
       <div
         style={{
           marginTop: "2rem",

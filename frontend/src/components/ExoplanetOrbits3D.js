@@ -121,18 +121,15 @@ const ExoplanetOrbits3D = ({ planets, showGoldilocks = false, disableNavigation 
           <ambientLight intensity={0.5} />
           <pointLight position={[0, 0, 0]} intensity={1.5} />
 
-          {/* Sun */}
           <mesh position={[0, 0, 0]}>
             <sphereGeometry args={[0.025, 32, 32]} />
             <meshBasicMaterial color="yellow" />
           </mesh>
 
-          {/* 🌿 Optional Goldilocks zone */}
           {showGoldilocks && planets.length > 0 && (
             <GoldilocksZone star={planets[0]} />
           )}
 
-          {/* Planet systems */}
           {planets.map((planet, index) => (
             <OrbitSystem
               key={index}
