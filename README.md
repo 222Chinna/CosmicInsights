@@ -14,13 +14,14 @@ This section deals with installing MySQL and running the seeder SQL and Python s
 
 ## Setting up the backend server
 
-This sections detals with setting up the backend server that interacts with the MySQl database and processes and returns cosmic data on requests to it.
+This sections detals with setting up the backend server that interacts with the MySQL database and processes and returns cosmic data on requests to it.
 
 Steps:
 
 1. Navigate to `backend-api/` and run `npm install express mysql2`                                                       
-2. `node index.js`                       
-3. Visit `localhost:3001/exoplanets` or `localhost:3001/solar_flares` or `localhost:3001/asteroids` or `localhost:3001/stars` to confirm that the server is up and running.
+2. Modify your local MySQL username and password in `index.js`, in the `mysql.createConnection` invocation.
+3. Start the backend server by running `node index.js`                       
+4. Visit `localhost:3001/exoplanets` or `localhost:3001/solar_flares` or `localhost:3001/asteroids` or `localhost:3001/stars` to confirm that the server is up and running.
 
 ## Setting up the front-end server
 
