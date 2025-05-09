@@ -31,4 +31,4 @@ Steps:
 
 1. Navigate to `frontend/` and run `npm install`. This will install all the dependencies that the front-end needs.
 2. Run `npm start`.
-3. Go to `localhost:3000` and start exploring Cosmic Insights!
+3. Go to `localhost:3000` (it should open automatically) and start exploring Cosmic Insights!
